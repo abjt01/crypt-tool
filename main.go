@@ -83,3 +83,9 @@ func decryptText(key int, enc string) string {
 	}
 	return sb.String()
 }
+
+case "encrypt":
+	switch mode {
+	case "file":
+		handleFileEncrypt()
+	}
