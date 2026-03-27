@@ -47,3 +47,26 @@ Examples:
   go run . encrypt file test.jpeg
   go run . decrypt file test.jpeg`)
 }
+// text(simple letter shift cipher)
+
+const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+func shiftAlphabet(key int) string {
+	n := len(alphabet)
+	k := key % n
+	return alphabet[n-k:] + alphabet[:n-k]
+}
+
+func encryptText(key int, plain string) string {
+	shifted := shiftAlphabet(key)
+	var sb strings.Builder
+	for _, r := range strings.ToUpper(plain) {
+		pos := strings.IndexRune(alphabet, r)
+		if pos >= 0 {
+			sb.WriteByte(shifted[pos])
+		} else {
+			sb.WriteRune(r)
+		}
+	}
+	return sb.String()
+}
