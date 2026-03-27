@@ -24,7 +24,6 @@ func main() {
 	switch action {
 	case "help":
 		printHelp()
-
 	case "encrypt":
 		switch mode {
 		case "text":
@@ -35,7 +34,6 @@ func main() {
 			fmt.Println("Mode must be 'text' or 'file'.")
 			os.Exit(1)
 		}
-
 	case "decrypt":
 		switch mode {
 		case "text":
@@ -46,7 +44,6 @@ func main() {
 			fmt.Println("Mode must be 'text' or 'file'.")
 			os.Exit(1)
 		}
-
 	default:
 		printHelp()
 		os.Exit(1)
@@ -133,25 +130,7 @@ func handleTextDecrypt() {
 	fmt.Println("Decrypted:", decryptText(key, os.Args[3]))
 }
 
-func handleFileEncrypt() {
-	if len(os.Args) < 4 {
-		fmt.Println("Usage: go run . encrypt file <path>")
-		os.Exit(1)
-	}
-	f := os.Args[3]
-	filecrypt.Encrypt(f, []byte("password"))
-	fmt.Println("File encrypted successfully.")
-}
-
-func handleFileDecrypt() {
-	if len(os.Args) < 4 {
-		fmt.Println("Usage: go run . decrypt file <path>")
-		os.Exit(1)
-	}
-	f := os.Args[3]
-	filecrypt.Decrypt(f, []byte("password"))
-	fmt.Println("File decrypted successfully.")
-}
+// file(AES-256-GCM encryption)
 
 func getPassword() []byte {
 	fmt.Print("Enter password: ")
@@ -164,4 +143,36 @@ func getPassword() []byte {
 		return getPassword()
 	}
 	return p1
+}
+
+func checkFile(path string) {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		fmt.Println("File not found:", path)
+		os.Exit(1)
+	}
+}
+
+func handleFileEncrypt() {
+	if len(os.Args) < 4 {
+		fmt.Println("Usage: go run . encrypt file <path>")
+		os.Exit(1)
+	}
+	f := os.Args[3]
+	checkFile(f)
+	filecrypt.Encrypt(f, getPassword())
+	fmt.Println("File encrypted successfully.")
+}
+
+func handleFileDecrypt() {
+	if len(os.Args) < 4 {
+		fmt.Println("Usage: go run . decrypt file <path>")
+		os.Exit(1)
+	}
+	f := os.Args[3]
+	checkFile(f)
+	fmt.Print("Enter password: ")
+	pw, _ := term.ReadPassword(int(os.Stdin.Fd()))
+	fmt.Println()
+	filecrypt.Decrypt(f, pw)
+	fmt.Println("File decrypted successfully.")
 }
