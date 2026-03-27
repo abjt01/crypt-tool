@@ -70,3 +70,16 @@ func encryptText(key int, plain string) string {
 	}
 	return sb.String()
 }
+func decryptText(key int, enc string) string {
+	shifted := shiftAlphabet(key)
+	var sb strings.Builder
+	for _, r := range strings.ToUpper(enc) {
+		pos := strings.IndexRune(shifted, r)
+		if pos >= 0 {
+			sb.WriteByte(alphabet[pos])
+		} else {
+			sb.WriteRune(r)
+		}
+	}
+	return sb.String()
+}
